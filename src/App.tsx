@@ -213,7 +213,7 @@ export default function App() {
             </Appear>
             <Appear delay={0.1}>
               <p className="lede-note">
-                Ontario Health’s own numbers, for {period ? period.trim() : "the latest month"} —
+                Ontario Health’s own numbers, for {period ? period.trim() : "the latest month"},
                 sorted around your question instead of the province’s.{" "}
                 <a href="#sources">What that means, and where the data comes from.</a>
               </p>
@@ -386,15 +386,15 @@ export default function App() {
             <div className="note">
               <h3>Why this site exists</h3>
               <p>
-                I’m Rami. I went looking for this data and found it hard to use. Ontario
-                Health does publish it — but the site is built for performance reporting, so
-                you get long tables sorted by region and by measure. It answers “how is the
-                system doing?” It does not answer the question a patient actually has:
+                Ontario Health does publish this data, but its site is built for performance
+                reporting. You get long tables sorted by region and by measure. They answer
+                “how is the system doing?” They do not answer the question a patient
+                actually has:
                 <em> where can I get this scan sooner, and how far is it?</em>
               </p>
               <p>
-                So I built this. Same numbers, one question, sorted the way you’d want them.
-                It’s free, there’s nothing to sign up for, and nothing is stored.
+                This page is the same numbers, one question, sorted the way you’d want
+                them. It’s free, there’s nothing to sign up for, and nothing is stored.
               </p>
             </div>
 
@@ -419,7 +419,7 @@ export default function App() {
                 <dd>
                   How many days people waited, on average, for a non-urgent scan at that
                   hospital{period ? ` in ${period.trim()}` : ""}. “Non-urgent” is Ontario’s
-                  Priority 4 — the routine scan your doctor orders. Urgent scans happen much
+                  Priority 4, the routine scan your doctor orders. Urgent scans happen much
                   faster and aren’t shown here.
                 </dd>
               </div>
@@ -447,7 +447,7 @@ export default function App() {
               <div>
                 <dt>“Recommended”</dt>
                 <dd>
-                  Not the shortest wait — the best trade. Every {MINUTES_PER_DAY} minutes of
+                  Not the shortest wait. It’s the best trade. Every {MINUTES_PER_DAY} minutes of
                   extra driving counts as one more day of waiting, so somewhere half an hour
                   further has to save you about 15 days to be worth the trip. Want the plain
                   order instead? Switch to <strong>Shortest wait</strong> or{" "}
@@ -458,23 +458,30 @@ export default function App() {
             <ul className="links">
               <li>
                 <a href={SOURCE_URL} target="_blank" rel="noreferrer">
-                  Ontario Health — wait times reporting
+                  Ontario Health: wait times reporting
                 </a>
               </li>
               <li>
                 <a href={DEFINITIONS_URL} target="_blank" rel="noreferrer">
-                  Ontario Health — how wait times are measured
+                  Ontario Health: how wait times are measured
                 </a>
               </li>
             </ul>
           </section>
 
           <footer className="footer">
-            <p>
+            <p className="footer-note">
               This isn’t medical advice, and it doesn’t book anything. Your doctor decides how
-              urgent your scan is and where the requisition goes — but you can ask to be sent
+              urgent your scan is and where the requisition goes. You can still ask to be sent
               somewhere with a shorter wait. That’s the whole point of this page. Bring it
               with you.
+            </p>
+            <p className="footer-by">
+              A project by{" "}
+              <a href="https://www.ramihmd.com" target="_blank" rel="noreferrer">
+                Rami Alhamad
+              </a>
+              .
             </p>
           </footer>
         </div>
@@ -514,7 +521,7 @@ function Results({
         <article className="hero">
           <div className="hero-tag">Our pick near you</div>
           <div className="hero-num">
-            {days != null ? (
+            {days != null && (
               <>
                 <SpinningNumber value={days} className="num" />
                 <span className="num-unit">
@@ -525,8 +532,6 @@ function Results({
                   {days} {daysWord(days)} average wait
                 </span>
               </>
-            ) : (
-              <span className="num">—</span>
             )}
           </div>
 
@@ -554,7 +559,7 @@ function Results({
             {ontario != null && days != null && (
               <span className="fact">
                 Ontario average is {Math.round(ontario)} days
-                {days < ontario ? " — this is better" : days > ontario ? " — this is worse" : ""}
+                {days < ontario ? ". This is better." : days > ontario ? ". This is worse." : ""}
               </span>
             )}
           </div>

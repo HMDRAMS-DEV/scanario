@@ -822,12 +822,21 @@ a:hover {
   margin-top: 28px;
 }
 
-.footer p {
+.footer-note {
   margin: 0;
   max-width: 60ch;
   font-size: 14px;
   line-height: 1.5;
   color: var(--muted);
+}
+
+.footer-by {
+  margin: 28px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
 }
 
 .reel {

@@ -5,7 +5,7 @@ Find the closest MRI or CT scan in Ontario with the shortest wait.
 Enter a postal code, pick MRI or CT and adult or child, say how far you'll drive, and see
 which hospitals near you are faster. Every number comes live from Ontario Health.
 
-Ontario Health publishes this data, but its site is built for performance reporting — long
+Ontario Health publishes this data, but its site is built for performance reporting: long
 tables by region and measure. This one answers a patient's question instead: where can I get
 this scan sooner, and how far is it?
 
@@ -36,4 +36,4 @@ npm run build
 Data from Ontario Health. Not medical advice.
 https://www.ontariohealth.ca/system/reporting/wait-times
 
-Built by Rami Alhamad — https://ramihmd.com
+A project by Rami Alhamad. https://www.ramihmd.com
