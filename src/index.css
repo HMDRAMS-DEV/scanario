@@ -364,6 +364,7 @@ a:hover {
 
 .seg-btn {
   position: relative;
+  z-index: 1;
   flex: 1 1 auto;
   border: 0;
   background: transparent;
@@ -394,14 +395,21 @@ a:hover {
   color: #fff;
 }
 
-/* Pill is a child of the active button, so it always paints above that
-   button's own background. */
+/* Positioned against the track, so reflow above the control cannot move it.
+   JS writes transform and width; CSS owns the tween. */
 .seg-pill {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   border-radius: 999px;
   background: var(--blue);
   box-shadow: 0 1px 3px rgba(11, 95, 212, 0.4);
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform, width;
+  transition:
+    transform 250ms var(--ease),
+    width 250ms var(--ease);
 }
 
 .seg-text {
@@ -425,47 +433,47 @@ a:hover {
 }
 
 .hero-tag {
-  display: inline-block;
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: var(--blue-tint);
-  color: var(--blue);
+  margin: 0;
   font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
+/* One line box: the number and its unit share a baseline. */
 .hero-num {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin: 16px 0 14px;
+  display: block;
+  margin: 10px 0 0;
+  line-height: 1;
 }
 
 .num {
-  font-size: clamp(64px, 15vw, 92px);
+  font-size: clamp(64px, 15vw, 88px);
   font-weight: 600;
-  line-height: 0.88;
   letter-spacing: -0.05em;
 }
 
+.digit {
+  display: inline-block;
+}
+
 .num-unit {
+  margin-left: 10px;
   font-size: 22px;
   font-weight: 500;
   color: var(--secondary);
   letter-spacing: -0.02em;
 }
 
-.num-unit small {
-  display: block;
+.num-caption {
+  margin: 6px 0 0;
   font-size: 14px;
-  font-weight: 400;
   color: var(--muted);
-  letter-spacing: 0;
 }
 
 .place {
-  margin: 0 0 4px;
+  margin: 22px 0 4px;
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.025em;
@@ -478,14 +486,8 @@ a:hover {
   color: var(--secondary);
 }
 
-.place-addr {
-  margin: 2px 0 0;
-  font-size: 15px;
-  color: var(--muted);
-}
-
 .why {
-  margin: 16px 0 0;
+  margin: 18px 0 0;
   padding: 12px 14px;
   border-radius: 12px;
   background: var(--blue-tint);
@@ -494,24 +496,16 @@ a:hover {
   line-height: 1.45;
 }
 
-.hero-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 8px;
-  margin-top: 14px;
-}
-
-.fact {
-  padding: 5px 11px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
+.facts {
+  margin: 14px 0 0;
   font-size: 13px;
-  color: var(--secondary);
+  line-height: 1.5;
+  color: var(--muted);
 }
 
 .maps {
   display: inline-block;
-  margin-top: 16px;
+  margin-top: 18px;
   font-size: 16px;
   font-weight: 500;
 }
@@ -837,17 +831,6 @@ a:hover {
   font-size: 13px;
   color: var(--muted);
   text-align: center;
-}
-
-.reel {
-  display: inline-block;
-  overflow: hidden;
-  height: 1em;
-  line-height: 1;
-}
-
-.reel > span {
-  display: inline-block;
 }
 
 @media (min-width: 640px) {

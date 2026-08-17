@@ -519,53 +519,44 @@ function Results({
     <div>
       <Appear>
         <article className="hero">
-          <div className="hero-tag">Our pick near you</div>
-          <div className="hero-num">
-            {days != null && (
-              <>
+          <p className="hero-tag">Our pick near you</p>
+
+          {days != null && (
+            <>
+              <p className="hero-num">
                 <SpinningNumber value={days} className="num" />
-                <span className="num-unit">
-                  {daysWord(days)}
-                  <small>average wait</small>
-                </span>
+                <span className="num-unit">{daysWord(days)}</span>
                 <span className="visually-hidden">
                   {days} {daysWord(days)} average wait
                 </span>
-              </>
-            )}
-          </div>
+              </p>
+              <p className="num-caption">average wait for a non-urgent {scanWord}</p>
+            </>
+          )}
 
           <h2 className="place">{pick.name}</h2>
           <p className="place-meta">
-            {awayLine(pick.km)} · {kmLabel(pick.km)}
+            {[awayLine(pick.km), kmLabel(pick.km), [pick.address, pick.city].filter(Boolean).join(", ")]
+              .filter(Boolean)
+              .join(" · ")}
           </p>
-          {(pick.address || pick.city) && (
-            <p className="place-addr">{[pick.address, pick.city].filter(Boolean).join(", ")}</p>
-          )}
 
           <p className="why">{recommendReason(pick, inRange)}</p>
 
-          <div className="hero-facts">
-            {wait?.p90 != null && (
-              <span className="fact">
-                9 in 10 waited under {Math.round(wait.p90)} days
-              </span>
-            )}
-            {wait?.pctTarget != null && (
-              <span className="fact">
-                {Math.round(wait.pctTarget)}% seen within the {P4_TARGET_DAYS}-day target
-              </span>
-            )}
-            {ontario != null && days != null && (
-              <span className="fact">
-                Ontario average is {Math.round(ontario)} days
-                {days < ontario ? ". This is better." : days > ontario ? ". This is worse." : ""}
-              </span>
-            )}
-          </div>
+          <p className="facts">
+            {[
+              wait?.p90 != null ? `9 in 10 waited under ${Math.round(wait.p90)} days` : null,
+              wait?.pctTarget != null
+                ? `${Math.round(wait.pctTarget)}% met the ${P4_TARGET_DAYS}-day target`
+                : null,
+              ontario != null ? `Ontario average ${Math.round(ontario)} days` : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
 
           <a className="maps" href={mapsUrl(pick)} target="_blank" rel="noreferrer">
-            Get the phone number and directions
+            Phone number and directions
             <span aria-hidden="true"> ↗</span>
           </a>
         </article>

@@ -1,5 +1,13 @@
-import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
-import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from "react";
 
 function stepRadio<T extends string>(
   e: KeyboardEvent,
@@ -23,9 +31,11 @@ function stepRadio<T extends string>(
 
 /**
  * Sliding-pill radio group (transitions.dev "tabs sliding").
- * The pill renders inside the active button so it always paints above that
- * button's own background — a sibling pill gets hidden behind the unselected
- * track colour.
+ *
+ * The pill is measured against the track with offsetLeft/offsetTop, never with
+ * viewport coordinates. A shared-layout animation (layoutId) would re-animate
+ * every time the page reflowed above the control, so selecting a postal code
+ * made all three groups bounce vertically while results loaded.
  */
 export function Segmented<T extends string>({
   value,
@@ -40,64 +50,98 @@ export function Segmented<T extends string>({
   labelledBy: string;
   size?: "lg" | "sm";
 }) {
+  const trackRef = useRef<HTMLDivElement>(null);
   const btnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const groupId = useId();
+  const [pill, setPill] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  // The first placement must not tween in from the corner.
+  const placed = useRef(false);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const btn = btnRefs.current[value];
+      if (!btn) return;
+      setPill({ x: btn.offsetLeft, y: btn.offsetTop, w: btn.offsetWidth, h: btn.offsetHeight });
+    };
+    measure();
+    const track = trackRef.current;
+    if (!track) return;
+    // Re-measure when the track wraps or resizes, not when the page scrolls.
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [value, options]);
+
+  useEffect(() => {
+    if (pill) placed.current = true;
+  }, [pill]);
 
   return (
-    <LayoutGroup id={groupId}>
-      <div className={`seg seg-${size}`} role="radiogroup" aria-labelledby={labelledBy}>
-        {options.map((opt) => {
-          const on = opt.id === value;
-          return (
-            <button
-              key={opt.id}
-              type="button"
-              role="radio"
-              aria-checked={on}
-              tabIndex={on ? 0 : -1}
-              className={`seg-btn${on ? " on" : ""}`}
-              ref={(el) => {
-                btnRefs.current[opt.id] = el;
-              }}
-              onClick={() => onChange(opt.id)}
-              onKeyDown={(e) =>
-                stepRadio(e, options, value, onChange, (id) => {
-                  btnRefs.current[id]?.focus();
-                })
-              }
-            >
-              {on && (
-                <motion.span
-                  layoutId={`${groupId}-pill`}
-                  className="seg-pill"
-                  transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                />
-              )}
-              <span className="seg-text">{opt.label}</span>
-            </button>
-          );
-        })}
-      </div>
-    </LayoutGroup>
+    <div
+      className={`seg seg-${size}`}
+      ref={trackRef}
+      role="radiogroup"
+      aria-labelledby={labelledBy}
+    >
+      {pill && (
+        <span
+          className="seg-pill"
+          aria-hidden="true"
+          style={{
+            transform: `translate(${pill.x}px, ${pill.y}px)`,
+            width: pill.w,
+            height: pill.h,
+            transition: placed.current ? undefined : "none",
+          }}
+        />
+      )}
+      {options.map((opt) => {
+        const on = opt.id === value;
+        return (
+          <button
+            key={opt.id}
+            type="button"
+            role="radio"
+            aria-checked={on}
+            tabIndex={on ? 0 : -1}
+            className={`seg-btn${on ? " on" : ""}`}
+            ref={(el) => {
+              btnRefs.current[opt.id] = el;
+            }}
+            onClick={() => onChange(opt.id)}
+            onKeyDown={(e) =>
+              stepRadio(e, options, value, onChange, (id) => {
+                btnRefs.current[id]?.focus();
+              })
+            }
+          >
+            <span className="seg-text">{opt.label}</span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
-/** Digits re-enter from below with blur (transitions.dev "number pop-in"). */
+/**
+ * Digits re-enter from below with blur (transitions.dev "number pop-in").
+ * Deliberately unclipped: an inline-block with overflow:hidden takes its
+ * bottom edge as its baseline, which pushed the adjacent unit out of line.
+ */
 export function SpinningNumber({ value, className }: { value: number; className?: string }) {
   const reduce = useReducedMotion();
   const text = String(Math.round(value));
   return (
     <span className={className} aria-hidden="true">
       {text.split("").map((digit, i) => (
-        <span className="reel" key={`${i}-${digit}`}>
-          <motion.span
-            initial={reduce ? false : { y: "60%", filter: "blur(2px)", opacity: 0 }}
-            animate={{ y: "0%", filter: "blur(0px)", opacity: 1 }}
-            transition={{ delay: i * 0.07, duration: 0.5, ease: [0.34, 1.45, 0.64, 1] }}
-          >
-            {digit}
-          </motion.span>
-        </span>
+        <motion.span
+          className="digit"
+          key={`${i}-${digit}`}
+          initial={reduce ? false : { y: "0.12em", filter: "blur(3px)", opacity: 0 }}
+          animate={{ y: "0em", filter: "blur(0px)", opacity: 1 }}
+          transition={{ delay: i * 0.07, duration: 0.5, ease: [0.34, 1.45, 0.64, 1] }}
+        >
+          {digit}
+        </motion.span>
       ))}
     </span>
   );
