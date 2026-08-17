@@ -1,5 +1,5 @@
 {
-  "name": "ontario-wait",
+  "name": "scanario",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -22,10 +22,10 @@
   },
   "description": "Find a shorter MRI or CT wait in Ontario, using Ontario Health data.",
   "license": "MIT",
-  "homepage": "https://ontariowait.ramihmd.com",
+  "homepage": "https://scanario.ramihmd.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/HMDRAMS-DEV/ontario-wait.git"
+    "url": "https://github.com/HMDRAMS-DEV/scanario.git"
   },
   "engines": {
     "node": "24.x"

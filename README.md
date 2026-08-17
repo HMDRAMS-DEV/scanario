@@ -1,6 +1,6 @@
-# Ontario Wait
+# Scanario
 
-A free tool to find a shorter MRI or CT wait in Ontario.
+Find the closest MRI or CT scan in Ontario with the shortest wait.
 
 Enter a postal code, pick MRI or CT and adult or child, say how far you'll drive, and see
 which hospitals near you are faster. Every number comes live from Ontario Health.

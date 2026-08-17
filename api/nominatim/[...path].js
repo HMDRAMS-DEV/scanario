@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     headers: {
       Accept: "application/json",
       "Accept-Language": "en",
-      "User-Agent": "OntarioWait/1.0 (+https://ontariowait.ramihmd.com)",
+      "User-Agent": "Scanario/1.0 (+https://scanario.ramihmd.com)",
     },
   });
 

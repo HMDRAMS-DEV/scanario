@@ -19,7 +19,7 @@ export default defineConfig({
         headers: {
           Accept: "application/json",
           "Accept-Language": "en",
-          "User-Agent": "OntarioWait/1.0 (+https://ramihmd.com; public wait-times tool)",
+          "User-Agent": "Scanario/1.0 (+https://scanario.ramihmd.com; public wait-times tool)",
         },
       },
     },

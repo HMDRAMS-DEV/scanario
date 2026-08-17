@@ -196,8 +196,8 @@ export default function App() {
       <div className="app">
         <div className="shell">
           <header className="topbar">
-            <span className="brand">Ontario Wait</span>
-            <span className="topbar-note">MRI &amp; CT wait times, arranged for patients</span>
+            <span className="brand">Scanario</span>
+            <span className="topbar-note">Ontario MRI &amp; CT wait times</span>
           </header>
 
           <section className="intro">
