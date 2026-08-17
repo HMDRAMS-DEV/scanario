@@ -30,8 +30,6 @@ npm run build
 
 - Distances are straight-line from the postal code, converted to a drive time at 80 km/h.
 - Ontario Health returns no phone numbers, so each hospital links out to Google Maps.
-- `src/components/canvasui/ParticleScroll.tsx` is vendored from canvasui.dev. It needs the
-  experimental HTML-in-Canvas API and falls back to plain scrolling everywhere else.
 
 Data from Ontario Health. Not medical advice.
 https://www.ontariohealth.ca/system/reporting/wait-times

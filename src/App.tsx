@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { fetchAllSites, geocode, looksLikePostal, RANGES } from "./api";
-import ParticleScroll from "./components/canvasui/ParticleScroll";
 import { Appear, Disclosure, FadeSwap, Segmented, SpinningNumber } from "./components/Motion";
 import {
   awayLine,
@@ -167,7 +166,15 @@ export default function App() {
   }, [query]);
 
   const province = useMemo(() => sites.find((s) => s.isProvince) ?? null, [sites]);
-  const period = periodLabel(sites);
+
+  // Hold the last known reporting month. Letting it fall back to a placeholder
+  // during a refetch re-wraps the paragraph above the panel, which shoves the
+  // whole control block down and reads as jank.
+  const [period, setPeriod] = useState("");
+  useEffect(() => {
+    const next = periodLabel(sites);
+    if (next) setPeriod(next);
+  }, [sites]);
 
   const inRange = useMemo(
     () => sites.filter((s) => !s.isProvince && (rangeKm === Infinity || s.km <= rangeKm)),
@@ -192,8 +199,7 @@ export default function App() {
   const geoBad = geoState === "bad";
 
   return (
-    <ParticleScroll className="stage" point={0.72} band={320} density={2.4} spread={140} swirl={40}>
-      <div className="app">
+    <div className="app">
         <div className="shell">
           <header className="topbar">
             <span className="brand">Scanario</span>
@@ -484,9 +490,8 @@ export default function App() {
               .
             </p>
           </footer>
-        </div>
       </div>
-    </ParticleScroll>
+    </div>
   );
 }
 
@@ -535,13 +540,14 @@ function Results({
           )}
 
           <h2 className="place">{pick.name}</h2>
-          <p className="place-meta">
-            {[awayLine(pick.km), kmLabel(pick.km), [pick.address, pick.city].filter(Boolean).join(", ")]
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
+          <p className="place-meta">{awayLine(pick.km)}</p>
 
           <p className="why">{recommendReason(pick, inRange)}</p>
+
+          <a className="maps" href={mapsUrl(pick)} target="_blank" rel="noreferrer">
+            Phone number and directions
+            <span aria-hidden="true"> ↗</span>
+          </a>
 
           <p className="facts">
             {[
@@ -554,11 +560,6 @@ function Results({
               .filter(Boolean)
               .join(" · ")}
           </p>
-
-          <a className="maps" href={mapsUrl(pick)} target="_blank" rel="noreferrer">
-            Phone number and directions
-            <span aria-hidden="true"> ↗</span>
-          </a>
         </article>
       </Appear>
 
