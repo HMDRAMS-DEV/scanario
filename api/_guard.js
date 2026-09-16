@@ -29,13 +29,20 @@ function rateLimited(ip) {
 }
 
 export function allow(req, res) {
+  // The proxied responses are cached at the edge, so the cache key has to
+  // include the header the check reads. Without this a single allowed request
+  // warms the cache and the CDN then serves that response to everyone.
+  res.setHeader("Vary", "Sec-Fetch-Site");
+
   if (!SAME_SITE.has(req.headers["sec-fetch-site"])) {
+    res.setHeader("Cache-Control", "no-store");
     res.status(403).json({ error: "This endpoint only serves the Scanario front end." });
     return false;
   }
 
   const ip = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "unknown";
   if (rateLimited(ip)) {
+    res.setHeader("Cache-Control", "no-store");
     res.setHeader("Retry-After", "60");
     res.status(429).json({ error: "Too many lookups. Try again in a minute." });
     return false;

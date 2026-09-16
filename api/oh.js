@@ -1,9 +1,12 @@
 /**
  * Proxies wait-time lookups to Health Quality Ontario. This was a plain Vercel
- * rewrite; it is a function now so the same-site and rate-limit checks in
- * _guard.js apply to it too.
+ * rewrite; it is a function now so the checks in _guard.js apply to it too.
+ *
+ * The path arrives as a query parameter rather than a filesystem catch-all
+ * because Vercel compiles `[...path]` to a single-segment matcher, and the
+ * wait-time endpoint is eight segments deep.
  */
-import { allow } from "../_guard.js";
+import { allow } from "./_guard.js";
 
 const UPSTREAM = "https://or.hqontario.ca";
 
@@ -11,7 +14,7 @@ export default async function handler(req, res) {
   if (!allow(req, res)) return;
 
   const { path, ...rest } = req.query;
-  const segments = (Array.isArray(path) ? path : [path]).filter(Boolean);
+  const segments = String(path || "").split("/").filter(Boolean);
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(rest)) {
     for (const v of Array.isArray(value) ? value : [value]) params.append(key, v);
