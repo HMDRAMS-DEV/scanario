@@ -3,9 +3,13 @@
  * production we need a function because Nominatim's usage policy requires an
  * identifying User-Agent, and a plain Vercel rewrite cannot set one.
  */
+import { allow } from "../_guard.js";
+
 const UPSTREAM = "https://nominatim.openstreetmap.org";
 
 export default async function handler(req, res) {
+  if (!allow(req, res)) return;
+
   const { path, ...rest } = req.query;
   const segments = (Array.isArray(path) ? path : [path]).filter(Boolean);
   const params = new URLSearchParams();

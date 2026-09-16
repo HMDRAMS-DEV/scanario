@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/oh/:path*", "destination": "https://or.hqontario.ca/:path*" },
+    { "source": "/oh/:path*", "destination": "/api/oh/:path*" },
     { "source": "/nominatim/:path*", "destination": "/api/nominatim/:path*" }
   ],
   "headers": [
